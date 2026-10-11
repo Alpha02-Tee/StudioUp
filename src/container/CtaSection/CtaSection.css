@@ -1,0 +1,40 @@
+.cta-section {
+  padding: 30px 0 90px;
+}
+
+.cta-box {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 65px 30px;
+  border-radius: 20px;
+  border: 1px solid #E2DFFF;
+  background: linear-gradient(135deg, #F0EEFF, #E8E5FF);
+}
+
+.cta-box::before {
+  content: "";
+  position: absolute;
+  width: 250px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  top: -50px;
+  left: 30px;
+  transform: rotate(-15deg);
+}
+
+.cta-box h2 {
+  position: relative;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  color: var(--text-primary, #172554);
+}
+
+.cta-box p {
+  position: relative;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text-secondary, #64748B);
+}

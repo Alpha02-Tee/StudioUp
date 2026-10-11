@@ -1,0 +1,80 @@
+.navbar {
+  height: 68px;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--border-light, #EEF0F6);
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.nav-inner {
+  width: min(1180px, calc(100% - 48px));
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ========= Logo (Fixed) ========= */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-primary, #172554);
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-soft, #EEECFF);
+  color: var(--primary, #6C5CE7);
+  flex-shrink: 0;
+}
+
+.logo-up {
+  color: var(--primary, #6C5CE7);
+}
+
+/*============== Nav links============= */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-left: auto;
+  margin-right: 30px;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary, #64748B);
+  transition: 0.2s ease;
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: var(--primary, #6C5CE7);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.login-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary, #6C5CE7);
+  text-decoration: none;
+}

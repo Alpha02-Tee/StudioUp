@@ -1,0 +1,119 @@
+:root {
+  /* Brand */
+  --primary: #6C5CE7;
+  --primary-dark: #5748D4;
+  --primary-light: #8B7FF0;
+  --primary-soft: #EEECFF;
+  
+  /* Background */
+  --background: #F7F7FB;
+  --surface: #FFFFFF;
+  
+  /* Text */
+  --text-primary: #172554;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --text-white: #FFFFFF;
+  
+  /* Accent colors */
+  --blue: #3882F6;
+  --blue-soft: #E8F2FF;
+  --green: #108981;
+  --green-soft: #E8F8F2;
+  --pink: #F87171;
+  --pink-soft: #FFF0F0;
+  --gray: #64748B;
+  --gray-soft: #F1F5F9;
+  
+  /* Borders */
+  --border: #E8EAF2;
+  --border-light: #EEF0F6;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.10);
+  --shadow-purple: 0 6px 18px rgba(108, 92, 231, 0.20);
+  
+  /* Radius */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+.container {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.section {
+  padding: 90px 0;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  padding: 13px 21px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-purple);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(108, 92, 231, 0.25);
+}
+
+.btn-large {
+  padding: 15px 24px;
+  font-size: 14px;
+}

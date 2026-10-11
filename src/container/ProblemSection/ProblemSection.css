@@ -1,0 +1,82 @@
+.problem-section {
+  background: #FFFFFF;
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  margin-top: 45px;
+}
+
+.problem-card {
+  background: white;
+  border: 1px solid var(--border, #E8EAF2);
+  border-radius: 16px;
+  padding: 25px 18px;
+  text-align: center;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.04));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.problem-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card, 0 4px 20px rgba(15, 23, 42, 0.05));
+}
+
+.problem-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-blue {
+  background: var(--blue-soft, #E8F2FF);
+  color: var(--blue, #3882F6);
+}
+
+.icon-purple {
+  background: var(--primary-soft, #EEECFF);
+  color: var(--primary, #6C5CE7);
+}
+
+.icon-green {
+  background: var(--green-soft, #E8F8F2);
+  color: var(--green, #108981);
+}
+
+.icon-pink {
+  background: var(--pink-soft, #FFF0F0);
+  color: var(--pink, #F87171);
+}
+
+.icon-gray {
+  background: var(--gray-soft, #F1F5F9);
+  color: var(--gray, #64748B);
+}
+
+.problem-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary, #172554);
+}
+
+.problem-card p {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary, #64748B);
+}
+
+.problem-bottom {
+  margin-top: 28px;
+  text-align: center;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-muted, #94A3B8);
+}
