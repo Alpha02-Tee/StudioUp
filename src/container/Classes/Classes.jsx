@@ -17,44 +17,26 @@ const PALETTE = [
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const TIMES = ['07:45', '09:00', '10:25', '11:45', '13:00', '14:20', '15:45', '19:00', '20:00', '21:00', '22:00'];
 
-const DEFAULT_MODULES = [
-  { id: 'stas201', code: 'STAS201', name: 'Statistical Theory', color: 'blue', semester: 'Semester 2', credits: '16' },
-  { id: 'wrav201', code: 'WRAV201', name: 'Data Structures & Algorithms', color: 'gray', semester: 'Semester 2', credits: '16' },
-  { id: 'matt201', code: 'MATT201', name: 'Mathematics', color: 'green', semester: 'Semester 2', credits: '16' },
-  { id: 'wriv201', code: 'WRIV201', name: 'Information Systems', color: 'purple', semester: 'Semester 2', credits: '16' },
-  { id: 'wrcv201', code: 'WRCV201', name: 'Computer Networks', color: 'pink', semester: 'Semester 2', credits: '16' },
-  { id: 'wrwv201', code: 'WRWV201', name: 'Web Development', color: 'orange', semester: 'Semester 2', credits: '16' }
-];
-
-const DEFAULT_SESSIONS = [
-  { id: '1', day: 'Monday', start: '09:00', end: '10:00', moduleId: 'stas201', type: 'Lecture', kind: 'university' },
-  { id: '2', day: 'Tuesday', start: '10:25', end: '11:25', moduleId: 'matt201', type: 'Lecture', kind: 'university' },
-  { id: '3', day: 'Wednesday', start: '10:25', end: '11:25', moduleId: 'wrcv201', type: 'Lecture', kind: 'university' },
-  { id: '4', day: 'Monday', start: '11:45', end: '12:35', moduleId: 'wriv201', type: 'Lecture', kind: 'university' },
-  { id: '5', day: 'Thursday', start: '11:45', end: '12:35', moduleId: 'wrav201', type: 'Practical', kind: 'university' },
-  { id: '6', day: 'Tuesday', start: '19:00', end: '20:00', moduleId: 'wrav201', type: 'Independent study', kind: 'study' }
-];
-
 const Classes = () => {
   const navigate = useNavigate();
 
-  // State
+  // State: Starts completely empty now
   const [modules, setModules] = useState(() => {
     const saved = localStorage.getItem('studioUp_modules');
-    return saved ? JSON.parse(saved) : DEFAULT_MODULES;
+    return saved ? JSON.parse(saved) : [];
   });
   const [sessions, setSessions] = useState(() => {
     const saved = localStorage.getItem('studioUp_sessions');
-    return saved ? JSON.parse(saved) : DEFAULT_SESSIONS;
+    return saved ? JSON.parse(saved) : [];
   });
 
-  const [kind, setKind] = useState('university'); // 'university' or 'study'
-  const [view, setView] = useState('week'); // 'week', 'day', 'list'
+  const [kind, setKind] = useState('university'); 
+  const [view, setView] = useState('week'); 
   const [offset, setOffset] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Modal States
-  const [activeModal, setActiveModal] = useState(null); // 'module', 'session', 'detail'
+  const [activeModal, setActiveModal] = useState(null); 
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [activeModuleId, setActiveModuleId] = useState(null);
 
@@ -92,7 +74,7 @@ const Classes = () => {
   }, 0);
   
   const universitySessions = sessions.filter(s => s.kind === 'university');
-  const nextClass = universitySessions[0]; // Simplified for this prototype
+  const nextClass = universitySessions.length > 0 ? universitySessions[0] : null;
 
   // Filtering
   const filteredModules = modules.filter(m => (m.code + ' ' + m.name).toLowerCase().includes(searchQuery.toLowerCase()));
@@ -127,7 +109,22 @@ const Classes = () => {
   };
 
   const openSessionSlot = (day, time) => {
+    if (modules.length === 0) {
+      alert("Please add a class module first before scheduling it on the timetable.");
+      setActiveModal('module');
+      return;
+    }
     setSessionForm(prev => ({ ...prev, day, start: time, kind, moduleId: modules[0]?.id || '' }));
+    setActiveModal('session');
+  };
+
+  const handleAddTimetableClick = () => {
+    if (modules.length === 0) {
+      alert("Please add a class module first before scheduling a session.");
+      setActiveModal('module');
+      return;
+    }
+    setSessionForm(prev => ({...prev, moduleId: modules[0]?.id || ''})); 
     setActiveModal('session');
   };
 
@@ -153,6 +150,9 @@ const Classes = () => {
             <button className="nav-item"><Settings /><span>Settings</span></button>
           </div>
         </nav>
+        <div className="sidebar-note">
+          <Sparkles size={16}/><br/>Small steps<br/>every day lead to<br/>big results.
+        </div>
       </aside>
 
       {/* TOPBAR */}
@@ -170,7 +170,7 @@ const Classes = () => {
       </header>
 
       <main className="main">
-        <div className="content"> {/* <-- ADD THIS WRAPPER */}
+        <div className="content">
           <section className="page-heading">
             <div>
               <h1>My Classes</h1>
@@ -178,147 +178,155 @@ const Classes = () => {
             </div>
             <div className="actions">
               <button className="btn" onClick={() => setActiveModal('module')}><Plus size={14}/> Add Class</button>
-              <button className="btn primary" onClick={() => { setSessionForm(prev => ({...prev, moduleId: modules[0]?.id || ''})); setActiveModal('session'); }}><Calendar size={14}/> Add to Timetable</button>
+              <button className="btn primary" onClick={handleAddTimetableClick}><Calendar size={14}/> Add to Timetable</button>
             </div>
           </section>
 
-        {/* STATS */}
-        <section className="stats">
-          <div className="stat">
-            <div className="stat-icon purple"><BookOpen size={20}/></div>
-            <div>
-              <div className="stat-label">Total Modules</div>
-              <div className="stat-number">{modules.length}</div>
-              <div className="stat-sub">Active this semester</div>
-            </div>
-          </div>
-          <div className="stat">
-            <div className="stat-icon blue"><CalendarDays size={20}/></div>
-            <div>
-              <div className="stat-label">Classes This Week</div>
-              <div className="stat-number">{universitySessions.length}</div>
-              <div className="stat-sub">Scheduled sessions</div>
-            </div>
-          </div>
-          <div className="stat">
-            <div className="stat-icon green"><Clock3 size={20}/></div>
-            <div>
-              <div className="stat-label">Next Class</div>
-              <div className="stat-number" style={{fontSize: '18px'}}>{nextClass ? `${getModule(nextClass.moduleId).code}` : 'None'}</div>
-              <div className="stat-sub">{nextClass ? `${nextClass.day} ${formatTime(nextClass.start)}` : 'Add a session'}</div>
-            </div>
-          </div>
-          <div className="stat">
-            <div className="stat-icon purple"><GraduationCap size={20}/></div>
-            <div>
-              <div className="stat-label">Study Hours</div>
-              <div className="stat-number">{(studyMins / 60).toFixed(1)} hrs</div>
-              <div className="stat-sub">Planned this week</div>
-            </div>
-          </div>
-        </section>
-
-        {/* TIMETABLE */}
-        <section className="panel timetable-panel">
-          <div className="table-toolbar">
-            <div className="view-tabs">
-              <button className={`tab-btn ${kind === 'university' ? 'active' : ''}`} onClick={() => setKind('university')}>University Schedule</button>
-              <button className={`tab-btn ${kind === 'study' ? 'active' : ''}`} onClick={() => setKind('study')}>Study Plan</button>
-            </div>
-            <div className="date-tools">
-              <button className="btn small" onClick={() => setOffset(0)}>Today</button>
-              <button className="icon-btn" onClick={() => setOffset(o => o - 1)}><ChevronLeft size={14}/></button>
-              <div className="date-label">Week of {getWeekDate().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
-              <button className="icon-btn" onClick={() => setOffset(o => o + 1)}><ChevronRight size={14}/></button>
-              <div className="view-switch">
-                <button className={view === 'week' ? 'active' : ''} onClick={() => setView('week')}>Week</button>
-                <button className={view === 'day' ? 'active' : ''} onClick={() => setView('day')}>Day</button>
-                <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>List</button>
+          {/* STATS */}
+          <section className="stats">
+            <div className="stat">
+              <div className="stat-icon purple"><BookOpen size={20}/></div>
+              <div>
+                <div className="stat-label">Total Modules</div>
+                <div className="stat-number">{modules.length}</div>
+                <div className="stat-sub">Active this semester</div>
               </div>
             </div>
-          </div>
+            <div className="stat">
+              <div className="stat-icon blue"><CalendarDays size={20}/></div>
+              <div>
+                <div className="stat-label">Classes This Week</div>
+                <div className="stat-number">{universitySessions.length}</div>
+                <div className="stat-sub">Scheduled sessions</div>
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-icon green"><Clock3 size={20}/></div>
+              <div>
+                <div className="stat-label">Next Class</div>
+                <div className="stat-number" style={{fontSize: '18px'}}>{nextClass ? `${getModule(nextClass.moduleId).code}` : 'None'}</div>
+                <div className="stat-sub">{nextClass ? `${nextClass.day} ${formatTime(nextClass.start)}` : 'Add a session'}</div>
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-icon purple"><GraduationCap size={20}/></div>
+              <div>
+                <div className="stat-label">Study Hours</div>
+                <div className="stat-number">{(studyMins / 60).toFixed(1)} hrs</div>
+                <div className="stat-sub">Planned this week</div>
+              </div>
+            </div>
+          </section>
 
-          {view === 'list' ? (
-            <div className="list-view">
-              {currentSessions.length === 0 ? <div className="empty-state">No sessions here yet. Add one to get started.</div> : 
-                currentSessions.sort((a,b) => DAYS.indexOf(a.day) - DAYS.indexOf(b.day)).map(s => {
-                  const m = getModule(s.moduleId);
-                  const c = getColor(m.color);
-                  return (
-                    <div className="list-item" key={s.id} onClick={() => { setActiveSessionId(s.id); setActiveModal('detail'); }}>
-                      <div className="list-time">{s.day}<br/>{formatTime(s.start)} - {formatTime(s.end)}</div>
-                      <span className="module-dot" style={{background: c[2]}}></span>
-                      <div className="list-main">
-                        <strong>{m.code} {s.type}</strong>
-                        <span>{m.name}</span>
+          {/* TIMETABLE */}
+          <section className="panel timetable-panel">
+            <div className="table-toolbar">
+              <div className="view-tabs">
+                <button className={`tab-btn ${kind === 'university' ? 'active' : ''}`} onClick={() => setKind('university')}>University Schedule</button>
+                <button className={`tab-btn ${kind === 'study' ? 'active' : ''}`} onClick={() => setKind('study')}>Study Plan</button>
+              </div>
+              <div className="date-tools">
+                <button className="btn small" onClick={() => setOffset(0)}>Today</button>
+                <button className="icon-btn" onClick={() => setOffset(o => o - 1)}><ChevronLeft size={14}/></button>
+                <div className="date-label">Week of {getWeekDate().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
+                <button className="icon-btn" onClick={() => setOffset(o => o + 1)}><ChevronRight size={14}/></button>
+                <div className="view-switch">
+                  <button className={view === 'week' ? 'active' : ''} onClick={() => setView('week')}>Week</button>
+                  <button className={view === 'day' ? 'active' : ''} onClick={() => setView('day')}>Day</button>
+                  <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>List</button>
+                </div>
+              </div>
+            </div>
+
+            {view === 'list' ? (
+              <div className="list-view">
+                {currentSessions.length === 0 ? <div className="empty-state" style={{padding: '40px', textAlign: 'center', color: '#8392ae'}}>No sessions here yet. Click "Add to Timetable" to get started.</div> : 
+                  currentSessions.sort((a,b) => DAYS.indexOf(a.day) - DAYS.indexOf(b.day)).map(s => {
+                    const m = getModule(s.moduleId);
+                    const c = getColor(m.color);
+                    return (
+                      <div className="list-item" key={s.id} onClick={() => { setActiveSessionId(s.id); setActiveModal('detail'); }}>
+                        <div className="list-time">{s.day}<br/>{formatTime(s.start)} - {formatTime(s.end)}</div>
+                        <span className="module-dot" style={{background: c[2]}}></span>
+                        <div className="list-main">
+                          <strong>{m.code} {s.type}</strong>
+                          <span>{m.name}</span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
-              }
-            </div>
-          ) : (
-            <div className="table-wrap">
-              <table className="schedule">
-                <thead>
-                  <tr>
-                    <th>Time</th>
-                    {shownDays.map(d => <th key={d}>{d}</th>)}
-                  </tr>
-                </thead>
-                <tbody>
-                  {shownTimes.map(t => (
-                    <tr key={t}>
-                      <td className="time-cell">{formatTime(t)}</td>
-                      {shownDays.map(day => {
-                        const s = currentSessions.find(x => x.day === day && x.start === t);
-                        if (s) {
-                          const m = getModule(s.moduleId);
-                          const c = getColor(m.color);
-                          return (
-                            <td key={day}>
-                              <div className="slot" style={{background: c[1], color: c[2]}} onClick={() => { setActiveSessionId(s.id); setActiveModal('detail'); }}>
-                                <div className="slot-title"><span className="bullet"></span>{m.code}</div>
-                                <div className="slot-type">{s.type}</div>
-                              </div>
-                            </td>
-                          );
-                        }
-                        return <td key={day}><div className="empty-slot" onClick={() => openSessionSlot(day, t)}></div></td>;
-                      })}
+                    );
+                  })
+                }
+              </div>
+            ) : (
+              <div className="table-wrap">
+                <table className="schedule">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      {shownDays.map(d => <th key={d}>{d}</th>)}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
+                  </thead>
+                  <tbody>
+                    {shownTimes.map(t => (
+                      <tr key={t}>
+                        <td className="time-cell">{formatTime(t)}</td>
+                        {shownDays.map(day => {
+                          const s = currentSessions.find(x => x.day === day && x.start === t);
+                          if (s) {
+                            const m = getModule(s.moduleId);
+                            const c = getColor(m.color);
+                            return (
+                              <td key={day}>
+                                <div className="slot" style={{background: c[1], color: c[2]}} onClick={() => { setActiveSessionId(s.id); setActiveModal('detail'); }}>
+                                  <div className="slot-title"><span className="bullet"></span>{m.code}</div>
+                                  <div className="slot-type">{s.type}</div>
+                                </div>
+                              </td>
+                            );
+                          }
+                          return <td key={day}><div className="empty-slot" onClick={() => openSessionSlot(day, t)}></div></td>;
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
 
-        {/* MODULES */}
-        <section className="panel modules-panel">
-          <div className="section-head">
-            <div><h2>My Modules</h2><p>Your current modules and their weekly activity.</p></div>
-            <button className="btn small" onClick={() => setSearchQuery('')}>View All <ArrowRight size={12} style={{marginLeft: '4px'}}/></button>
-          </div>
-          <div className="module-grid">
-            {filteredModules.map(m => {
-              const c = getColor(m.color);
-              const n = sessions.filter(s => s.moduleId === m.id).length;
-              return (
-                <article className="module-card" key={m.id} style={{background: `linear-gradient(145deg, ${c[1]}88, #fff 75%)`, borderColor: `${c[2]}55`}}>
-                  <div className="module-card-head">
-                    <span className="module-dot" style={{background: `linear-gradient(135deg, ${c[2]}, #fff)`}}></span>
-                    <span className="module-code">{m.code}</span>
-                  </div>
-                  <div className="module-name">{m.name}</div>
-                  <div className="semester">{m.semester}</div>
-                  <div className="module-sessions"><Calendar size={12}/> {n} scheduled sessions</div>
-                  <button className="btn" onClick={() => { setActiveModuleId(m.id); setActiveModal('detailModule'); }} style={{width: '100%', fontSize: '11px', padding: '7px'}}>View Details</button>
-                </article>
-              );
-            })}
-          </div>
-        </section>
+          {/* MODULES */}
+          <section className="panel modules-panel">
+            <div className="section-head">
+              <div><h2>My Modules</h2><p>Your current modules and their weekly activity.</p></div>
+              <button className="btn small" onClick={() => setSearchQuery('')}>View All <ArrowRight size={12} style={{marginLeft: '4px'}}/></button>
+            </div>
+            
+            {filteredModules.length === 0 ? (
+               <div className="empty-state" style={{padding: '30px', textAlign: 'center', color: '#8392ae', border: '1px dashed #dfe7f7', borderRadius: '12px'}}>
+                 No modules added yet. Click "Add Class" to start building your semester.
+               </div>
+            ) : (
+              <div className="module-grid">
+                {filteredModules.map(m => {
+                  const c = getColor(m.color);
+                  const n = sessions.filter(s => s.moduleId === m.id).length;
+                  return (
+                    <article className="module-card" key={m.id} style={{background: `linear-gradient(145deg, ${c[1]}88, #fff 75%)`, borderColor: `${c[2]}55`}}>
+                      <div className="module-card-head">
+                        <span className="module-dot" style={{background: `linear-gradient(135deg, ${c[2]}, #fff)`}}></span>
+                        <span className="module-code">{m.code}</span>
+                      </div>
+                      <div className="module-name">{m.name}</div>
+                      <div className="semester">{m.semester}</div>
+                      <div className="module-sessions"><Calendar size={12}/> {n} scheduled sessions</div>
+                      <button className="btn" onClick={() => { setActiveModuleId(m.id); setActiveModal('detailModule'); }} style={{width: '100%', fontSize: '11px', padding: '7px'}}>View Details</button>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
         </div>
       </main>
 
