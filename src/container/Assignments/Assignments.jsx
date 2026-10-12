@@ -6,7 +6,7 @@ import {
   ChartNoAxesColumn, Settings, Search, Bell, Plus, 
   ChevronDown, ChevronRight, Leaf, Triangle, Monitor, 
   FilePlus, X, ChevronUp, Lightbulb, ArrowRight, Flame, Clock, 
-  CheckCircle 
+  CheckCircle, CheckSquare 
 } from 'lucide-react';
 import './Assignments.css';
 
@@ -52,7 +52,6 @@ const Assignments = () => {
     setIsGradingOpen(false);
   };
 
-  // Status Cycle Logic (Not Started -> In Progress -> Submitted)
   const handleStatusCycle = (id, currentStatus) => {
     const nextStatus = currentStatus === 'Not Started' ? 'In Progress' :
                        currentStatus === 'In Progress' ? 'Submitted' : 'Not Started';
@@ -122,14 +121,12 @@ const Assignments = () => {
         <nav className="navigation">
           <div className="nav-section">
             <button className="nav-item" onClick={() => navigate('/home')}><HomeIcon /><span>Home</span></button>
-            <button className="nav-item"><CalendarDays /><span>My Semester</span></button>
-            <button className="nav-item" onClick={() => navigate('/classes')}><BookOpen /><span>Classes</span></button>
+            <button className="nav-item" onClick={() => navigate('/classes')}><CalendarDays /><span>Classes</span></button>
+            <button className="nav-item" onClick={() => navigate('/grades')}><CheckSquare /><span>Grades</span></button>
             <button className="nav-item active"><ClipboardList /><span>Assignments</span></button>
-            <button className="nav-item"><Calendar /><span>Calendar</span></button>
-            <button className="nav-item"><Users /><span>Group Projects</span></button>
-            <button className="nav-item"><FileText /><span>Notes</span></button>
             <button className="nav-item" onClick={() => navigate('/timer')}><Clock3 /><span>Focus Timer</span></button>
-            <button className="nav-item" onClick={() => navigate('/grades')}><ChartNoAxesColumn /><span>Grades</span></button>
+            <button className="nav-item"><Calendar /><span>Calendar</span></button>
+            <button className="nav-item"><BookOpen /><span>My Semester</span></button>
             <button className="nav-item"><Settings /><span>Settings</span></button>
           </div>
         </nav>
@@ -144,8 +141,10 @@ const Assignments = () => {
         </div>
         <div className="header-actions">
           <button className="notification"><Bell /><span className="notification-dot"></span></button>
-          {/* New Task button detached from Modal */}
-          <button className="new-task"><Plus /><span>New Task</span></button>
+          {/* Explicit type="button" added */}
+          <button type="button" className="new-task" onClick={() => setIsModalOpen(true)}>
+            <Plus /><span>New Task</span>
+          </button>
           <div className="user-area"><div className="avatar">AN</div><ChevronDown className="user-chevron" /></div>
         </div>
       </header>
@@ -153,7 +152,6 @@ const Assignments = () => {
       <main className="main">
         <div className="content">
           
-          {/* REDESIGNED HEADER */}
           <section className="page-heading-assignments">
             <div className="page-heading-title">
               <div className="heading-icon"><ClipboardList size={26} /></div>
@@ -162,7 +160,8 @@ const Assignments = () => {
                 <p>Keep track of everything you need to submit.</p>
               </div>
             </div>
-            <button className="primary-btn" onClick={() => setIsModalOpen(true)}>
+            {/* Explicit type="button" added to guarantee it fires onClick */}
+            <button type="button" className="primary-btn" onClick={() => setIsModalOpen(true)} style={{position: 'relative', zIndex: 10}}>
               <Plus size={16} /> New Assignment
             </button>
           </section>
@@ -195,7 +194,7 @@ const Assignments = () => {
                 </div>
                 <div className="filter-pills">
                   {['All', 'Due Soon', 'In Progress', 'Completed', 'Overdue'].map(f => (
-                    <button key={f} className={`filter-pill ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>{f}</button>
+                    <button type="button" key={f} className={`filter-pill ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>{f}</button>
                   ))}
                 </div>
                 <div className="sort-dropdown">
@@ -249,8 +248,8 @@ const Assignments = () => {
                         </div>
 
                         <div className="rich-action">
-                          {/* CLICKABLE STATUS PILL */}
                           <button 
+                            type="button"
                             className={`status-pill clickable ${safeStatus.replace(' ', '-').toLowerCase()}`}
                             onClick={() => handleStatusCycle(item.id, safeStatus)}
                             title="Click to change status"
@@ -270,7 +269,7 @@ const Assignments = () => {
               <div className="widget-card upcoming-widget">
                 <div className="widget-header">
                   <h3><Calendar size={18} /> Upcoming</h3>
-                  <button className="view-all">View All</button>
+                  <button type="button" className="view-all">View All</button>
                 </div>
                 <div className="upcoming-list">
                   {assignments.filter(a => a.status !== 'Submitted').sort((a, b) => new Date(a.dueDate || 0) - new Date(b.dueDate || 0)).slice(0, 4).map(item => {
@@ -300,7 +299,7 @@ const Assignments = () => {
               <div className="widget-card progress-widget">
                 <div className="widget-header">
                   <h3><ChartNoAxesColumn size={18} /> Assignment Progress</h3>
-                  <button className="view-all">This Semester</button>
+                  <button type="button" className="view-all">This Semester</button>
                 </div>
                 <div className="progress-breakdown">
                   <div className="pb-row"><div className="pb-label"><div className="dot green"></div> Completed</div><div className="pb-val"><span>{completedCount}</span> {progressPct}%</div></div>
@@ -322,15 +321,20 @@ const Assignments = () => {
         </div>
       </main>
 
+      {/* MODAL - Fixed to absolutely guarantee rendering over conflicting CSS */}
       {isModalOpen && (
-        <div className="modal-backdrop show" onClick={(e) => { if (e.target.className.includes('modal-backdrop')) setIsModalOpen(false) }}>
-          <section className="modal">
+        <div 
+          className="modal-backdrop show" 
+          style={{ display: 'flex', position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(28, 30, 55, .40)', alignItems: 'center', justifyContent: 'center' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false) }}
+        >
+          <section className="modal" style={{ zIndex: 10000, position: 'relative' }}>
             <div className="modal-header">
               <div className="modal-title">
                 <div className="modal-title-icon"><FilePlus size={22} /></div>
                 <div><h2>Create New Assignment</h2><p>Add an assignment to your semester.</p></div>
               </div>
-              <button className="close-btn" onClick={() => setIsModalOpen(false)}><X size={18} /></button>
+              <button type="button" className="close-btn" onClick={() => setIsModalOpen(false)}><X size={18} /></button>
             </div>
             
             <form onSubmit={handleAddAssignment}>
