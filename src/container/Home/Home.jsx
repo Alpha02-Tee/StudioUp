@@ -63,7 +63,7 @@ const Home = () => {
             <button className="nav-item"><CalendarDays /><span>My Semester</span></button>
             <button className="nav-item" onClick={() => navigate('/classes')}><BookOpen /><span>Classes</span></button>
             <button className="nav-item" onClick={() => navigate('/assignments')}><ClipboardList/><span>Assignments</span></button>
-            <button className="nav-item"><Calendar /><span>Calendar</span></button>
+            <button className="nav-item"  onClick={() => navigate('/calendar')}><Calendar /><span>Calendar</span></button>
             <button className="nav-item"><Users /><span>Group Projects</span></button>
             <button className="nav-item"><FileText /><span>Notes</span></button>
             <button className="nav-item" onClick={() => navigate('/timer')}><Clock3/><span>Focus Timer</span></button>

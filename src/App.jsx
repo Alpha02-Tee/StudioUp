@@ -5,6 +5,7 @@ import Grades from './container/Grades/Grades';
 import Timer from './container/Timer/Timer';
 import Assignments from './container/Assignments/Assignments';
 import Classes from './container/Classes/Classes';
+import Calendar from './container/Calendar/Calendar';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/timer" element={<Timer />} />
         <Route path="/assignments" element={<Assignments />} />
         <Route path="/classes" element={<Classes />} />
+        <Route path="/calendar" element={<Calendar />} />
       </Routes>
     </Router>
   );
